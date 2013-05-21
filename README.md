@@ -5,6 +5,7 @@ blindsFocus(百叶窗效果)
 联系：tomieweb@gmail.com<br>
 
 blindsFocus是依赖jquery的一个图片切换效果，基本原理和效果未做封装和插件处理
+效果点这里[http://tomiedev.sinaapp.com/demo/baiyechuang.htm](http://tomiedev.sinaapp.com/demo/baiyechuang.htm)
 
 
 ##使用
