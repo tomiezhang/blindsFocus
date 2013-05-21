@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> New Document </title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <link href="http://mat1.gtimg.com/www/base/base.css" rel="stylesheet" />
+<style>
+body{text-align:center;background:#fff}
+.wrap {width:680px;height:400px;position:relative;margin:20px auto;}
+.wrap li.a {width:680px;height:380px;position:absolute;left:0;top:0;overflow:hidden;}
+.wrap li.a p {
+    position:absolute; width:680px; padding:10px 25px; text-align:justify; font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;;z-index:2;line-height: 20px;left:0;bottom:0;display:none;
+}
+.wrap li.a img {
+  display:none;
+}
+.active {z-index:10;}
+.wrap li.active p,.wrap li.active img {
+	display:block;
+}
+</style>
+<script src="http://mat1.gtimg.com/joke/tomiezhang/ishare/jquery.js"></script>
+ </head>
+
+ <body>
+  <div class="wrap" id="Focus1">
+	<ul>
+		<li class="a active">
+		<a href="#"><img src="http://mat1.gtimg.com/joke/Koala/pic/im1.jpg"/></a>
+		<p>圖一，支持3種切換效果</p>
+		</li>
+		<li class="a">
+		<a href="#"><img src="http://mat1.gtimg.com/joke/Koala/pic/im2.jpg"/></a>
+		<p>圖二，依賴fx插件</p>
+		</li>
+		<li class="a">
+		<a href="#"><img src="http://mat1.gtimg.com/joke/Koala/pic/im3.jpg"/></a>
+		<p>圖三，就是這個樣子的</p>
+		</li>
+		<li class="a">
+		<a href="#"><img src="http://mat1.gtimg.com/joke/Koala/pic/im4.jpg"/></a>
+		<p>圖四，just so so</p>
+		</li>
+	</ul>
+	<div class="btnLeft"></div>
+	<div class="btnRight"></div>
+</div>
+<script>
+/**
+ * 百叶窗切换效果
+ * @param  {[type]} win){})(window [description]
+ * @return {[type]}                  [description]
+ */
+(function(win){
+	foucusBaiYe = win.foucusBaiYe = {
+		/**
+		 * 初始化函数
+		 * @param  {[type]} args {Content:变换的节点,BoxW:容器宽度,BoxH:容器高度,mod:切换模式h为横向s为竖着,Ceil:网格宽度建议设置整数,Go:切换间隔时间}
+		 * @return {[type]}      [description]
+		 */
+		init:function(args){
+			var _this = this;
+			this.Content = $(args.Content);
+			this.arr = [];
+			this.Round = [];
+			this.Time = args.Time;
+			this.BoxW = args.BoxW;
+			this.BoxH = args.BoxH;
+			this.mod = args.mod;
+			this.Ceil = args.Ceil;
+			this.Go = args.Go;
+			if(this.mod=="h"){
+				this.Tot =  Math.ceil(this.BoxH/this.Ceil);
+			}else{
+				this.Tot =  Math.ceil(this.BoxW/this.Ceil);
+			}
+			this.isAuto = true;
+			this.Content.each(function(i,o){
+				_this.arr.push(o);
+			});
+			setTimeout(function(){_this.AutoPlay(true);},_this.Go);
+		},
+		/**
+		 * 自动播放函数
+		 * @param {[type]} dir 布尔值播放顺序从前到后还是从后到前
+		 */
+		AutoPlay:function(dir){
+			if(!this.isAuto) return;
+			var tmp = "",_this = this,iW=0,iH=0;
+			$.each(this.arr,function(i,o){
+				if(i==0){
+					$(o).addClass("active");
+					if($(o).find("div.K_faxOut").length==0){
+						var next = $(_this.arr[i]).find("img").attr("src");
+						//console.log(_this.Tot);
+						$.each(new Array(_this.Tot),function(a,b){
+							//竖排or横排
+							if(_this.mod=="h"){
+								$(o).append('<div class="K_faxOut" style="position: absolute; width:'+_this.BoxW+'px; height:'+_this.Ceil+'px; background-image: url('+next+'); background-color: rgb(255, 255, 255); border: 0px solid rgb(255, 255, 255);left:'+iW+'px;top:'+iH+'px;background-position: -'+iW+'px -'+iH+'px;" Lefts="'+iW+'" Tops="'+iH+'" bgImg="'+next+'"></div>');
+									iH+=_this.Ceil;
+							}else{
+								$(o).append('<div class="K_faxOut" style="position: absolute; width:'+_this.Ceil+'px; height:'+_this.BoxH+'px; background-image: url('+next+'); background-color: rgb(255, 255, 255); border: 0px solid rgb(255, 255, 255);left:'+iW+'px;top:'+iH+'px;background-position: -'+iW+'px -'+iH+'px;" Lefts="'+iW+'" Tops="'+iH+'" bgImg="'+next+'"></div>');
+									iW+=_this.Ceil;
+							}
+							
+						});
+					}
+					 //逐个翻转
+					_this.Turn(_this.arr[i],i);
+				}else{
+					$(o).removeClass("active").addClass("a");
+				}
+			});
+			dir?this.arr.push(this.arr.shift()):this.arr.unshift(this.arr.pop());//數組操作
+
+		},
+		Turn:function(o,n){
+			var time = 0,_this=this,All=$(o).find("div.K_faxOut").length;
+			$(o).find("div.K_faxOut").each(function(i,obj){
+				 $(obj).css("display","block");
+				 _this.Round.push(obj);
+			});
+			$(this.arr[n]).find("img").css("display","none");
+			$(this.arr[(n+1)]).find("img").css("display","block");
+			$(this.arr[(n+1)]).find("p").css("display","block");
+			$(this.arr[n]).find("p").css("display","none");
+			var len = _this.Round.length,index=len;
+			(function(){
+				if(_this.Round.length>0){
+					//1.顺序模式,不同模式效果不同
+					//index-=1;
+					//2.随机模式
+					index = Math.floor(Math.random()*_this.Round.length);
+					//动画效果选择，看你喜欢什么样的了,也可以发挥想象扩展下
+					//$(_this.Round[index]).fadeOut('slow');
+					$(_this.Round[index]).slideUp('slow');
+					//$(_this.Round[index]).fadeOut('slow');
+					_this.Round.splice(index,1);
+					setTimeout(arguments.callee,13);
+				}else{
+					setTimeout(function(){
+						_this.AutoPlay(true);
+					},_this.Go)
+				}
+			})()
+		}
+	}
+})(window);
+foucusBaiYe.init({
+	Content:"#Focus1 .a",
+	BoxW:680,
+	BoxH:380,
+	mod:"s",
+	Ceil:10,
+	Go:2000
+})
+</script>
+ </body>
+</html>
